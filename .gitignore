@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Credentials
+.env
+*.key
+credentials.json
+token.json
+
+# Raw and processed datasets
+data/raw/*
+data/processed/*
+data/external/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/external/.gitkeep
+
+# Model artifacts
+models/*
+!models/.gitkeep
+
+# Mac files
+.DS_Store
