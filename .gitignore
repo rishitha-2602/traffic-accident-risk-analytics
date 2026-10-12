@@ -27,3 +27,19 @@ models/*
 
 # Mac files
 .DS_Store
+
+# Raw and processed datasets
+data/raw/*
+data/processed/*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment secrets
+.env
