@@ -1,0 +1,6 @@
+year,original_rows,processed_rows,rows_removed,unique_crash_ids,missing_crash_ids,missing_dates,severity_codes_not_in_lookup
+2021,97947,97947,0,97947,0,0,0
+2022,94700,94700,0,94700,0,0,0
+2023,92082,92082,0,92082,0,0,0
+2024,83092,83092,0,83092,0,0,0
+2025,82670,82670,0,82670,0,0,1

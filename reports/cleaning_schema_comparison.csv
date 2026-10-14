@@ -1,0 +1,6 @@
+year,column_count,columns_missing_from_year,missing_column_names
+2021,174,9,"Investigat_Arrv_Date, Investigat_Date_Rwy_Clrd, Investigat_Date_Scn_Clrd, Investigat_Notify_Date, Investigat_Time_Rwy_Clrd, Investigat_Time_Scn_Clrd, Rpt_Dir_Traffic, Rpt_Sec_Speed_Limit, Secondary_Crash_Fl"
+2022,174,9,"Investigat_Arrv_Date, Investigat_Date_Rwy_Clrd, Investigat_Date_Scn_Clrd, Investigat_Notify_Date, Investigat_Time_Rwy_Clrd, Investigat_Time_Scn_Clrd, Rpt_Dir_Traffic, Rpt_Sec_Speed_Limit, Secondary_Crash_Fl"
+2023,183,0,
+2024,183,0,
+2025,183,0,
