@@ -1,0 +1,51 @@
+
+TRUSTWORTHY AI AUDIT REPORT
+Traffic & Accident Risk Analytics
+Evaluation year: 2025
+
+MODEL PERFORMANCE
+-----------------
+Training records: 341,819
+Labeled 2025 test records: 78,491
+Accuracy: 0.5581 (55.81%)
+Balanced accuracy: 0.2376 (23.76%)
+Macro F1-score: 0.2379
+
+KEY FINDINGS
+------------
+1. Not_Injured had the strongest class performance:
+   precision = 0.67, recall = 0.79, F1-score = 0.72.
+
+2. Fatal_Injury performance was weak:
+   precision = 0.04, recall = 0.05, F1-score = 0.04.
+   The model detected only a small proportion of actual fatal-injury cases.
+
+3. Accuracy alone does not adequately describe this model's
+   performance across the five severity classes.
+
+4. Geographic audit results varied across City_ID groups.
+   Fatal-injury prediction rates, recall, false-positive rates,
+   and accuracy were not uniform.
+
+5. TPR values shown as NaN indicate that a group had no actual
+   fatal-injury cases in its test data; recall is undefined for
+   that group.
+
+LIMITATIONS
+-----------
+City_ID is used as a geographic grouping variable. It should not
+automatically be interpreted as a verified city name.
+
+The disparate-impact ratio compares each group's fatal-injury
+prediction rate with the highest rate among included groups.
+It is a descriptive screening measure, not proof of legal fairness.
+
+The model should not be used for real-world safety decisions
+without further validation and improvement.
+
+RECOMMENDATIONS
+---------------
+- Improve fatal-injury detection and minority-class performance.
+- Investigate class imbalance and alternative classification methods.
+- Review geographic groups with low recall and small positive counts.
+- Validate the model and fairness metrics before operational use.
