@@ -52,3 +52,7 @@ Model predictions depend on the available data, feature quality, and evaluation 
 ## Data Sources
 
 Texas Department of Transportation Crash Records Information System (CRIS). Document the dataset years, geographic coverage, and applicable access or sharing restrictions.
+
+## Project Limitations
+
+Historical crash records alone do not establish the probability of a crash occurring at every road location and time. Reliable crash-occurrence prediction requires appropriate non-crash observations and compatible exposure or traffic data. Historical hotspot analysis and crash-severity prediction should be distinguished from future crash-occurrence prediction.

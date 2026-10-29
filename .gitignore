@@ -7,13 +7,16 @@ venv/
 # Jupyter
 .ipynb_checkpoints/
 
-# Credentials
+# Credentials and secrets
 .env
 *.key
 credentials.json
 token.json
 
-# Raw and processed datasets
+# macOS
+.DS_Store
+
+# Ignore newly added datasets by default
 data/raw/*
 data/processed/*
 data/external/*
@@ -24,22 +27,3 @@ data/external/*
 # Model artifacts
 models/*
 !models/.gitkeep
-
-# Mac files
-.DS_Store
-
-# Raw and processed datasets
-data/raw/*
-data/processed/*
-
-# Python
-__pycache__/
-*.py[cod]
-.venv/
-venv/
-
-# Jupyter
-.ipynb_checkpoints/
-
-# Environment secrets
-.env
