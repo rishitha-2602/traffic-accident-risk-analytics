@@ -52,7 +52,3 @@ Model predictions depend on the available data, feature quality, and evaluation 
 ## Data Sources
 
 Texas Department of Transportation Crash Records Information System (CRIS). Document the dataset years, geographic coverage, and applicable access or sharing restrictions.
-
-## Author and Contributors
-
-Add the actual project contributors and their roles.
