@@ -26,6 +26,7 @@ st.markdown(
 # --------------------------------------------------
 # Load existing project data
 # --------------------------------------------------
+
 @st.cache_data
 def load_data():
     if not FEATURE_FILE.exists():
@@ -36,55 +37,48 @@ def load_data():
 
     df = pd.read_csv(FEATURE_FILE, low_memory=False)
 
-if CRASH_FILE.exists():
-    try:
-        with CRASH_FILE.open("rb") as f:
-            file_start = f.read(200)
+    # Load optional crash details
+    if CRASH_FILE.exists():
+        try:
+            with CRASH_FILE.open("rb") as f:
+                file_start = f.read(200)
 
-        # Skip Git LFS pointer files
-        if b"git-lfs.github.com/spec/v1" not in file_start:
-            crash = pd.read_csv(
-                CRASH_FILE,
-                low_memory=False
-            )
-
-            if "Crash_ID" in crash.columns:
-                crash = crash.drop_duplicates(subset=["Crash_ID"])
-                df = df.merge(
-                    crash,
-                    on="Crash_ID",
-                    how="left",
-                    suffixes=("", "_detail")
+            # Skip Git LFS pointer files
+            if b"git-lfs.github.com/spec/v1" not in file_start:
+                crash = pd.read_csv(
+                    CRASH_FILE,
+                    low_memory=False
                 )
 
-    except Exception as e:
-        print(f"Optional crash data could not be loaded: {e}")
+                if "Crash_ID" in crash.columns:
+                    crash = crash.drop_duplicates(subset=["Crash_ID"])
+                    df = df.merge(
+                        crash,
+                        on="Crash_ID",
+                        how="left",
+                        suffixes=("", "_detail")
+                    )
+            else:
+                print("Skipping crash_cleaned.csv: Git LFS pointer detected.")
 
-    # Normalize the key fields
+        except Exception as e:
+            print(f"Optional crash data could not be loaded: {e}")
+
+    # Normalize key fields
     for col in ["Latitude", "Longitude"]:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    if "Crash_Year" in df.columns:
-        df["Crash_Year"] = pd.to_numeric(
-            df["Crash_Year"], errors="coerce"
-        )
-
-    if "Crash_Month" in df.columns:
-        df["Crash_Month"] = pd.to_numeric(
-            df["Crash_Month"], errors="coerce"
-        )
-
-    if "Crash_Hour" in df.columns:
-        df["Crash_Hour"] = pd.to_numeric(
-            df["Crash_Hour"], errors="coerce"
-        )
+    for col in ["Crash_Year", "Crash_Month", "Crash_Hour"]:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
 
     for col in ["Severity_Target", "Time_Period"]:
         if col in df.columns:
             df[col] = df[col].fillna("Unknown").astype(str)
 
     return df
+
 
 
 try:
