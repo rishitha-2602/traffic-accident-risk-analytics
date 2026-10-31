@@ -47,6 +47,14 @@ def load_data():
             if b"git-lfs.github.com/spec/v1" not in file_start:
                 crash = pd.read_csv(
                     CRASH_FILE,
+                    usecols=lambda c: c in [
+                        "Crash_ID", "Crash_Date", "Crash_Time",
+                        "Crash_Fatal_Fl", "Death_Cnt", "Tot_Injry_Cnt",
+                        "Rpt_CRIS_Cnty_ID", "Rpt_City_ID",
+                        "Wthr_Cond_ID", "Light_Cond_ID",
+                        "Crash_Speed_Limit", "At_Intrsct_Fl",
+                        "Rpt_Street_Name", "Rpt_Street_Desc"
+                    ],
                     low_memory=False
                 )
 
