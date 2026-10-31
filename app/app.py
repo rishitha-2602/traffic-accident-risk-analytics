@@ -36,35 +36,29 @@ def load_data():
 
     df = pd.read_csv(FEATURE_FILE, low_memory=False)
 
-   if CRASH_FILE.exists():
-       try:
-           with CRASH_FILE.open("rb") as f:
-               file_start = f.read(200)
+if CRASH_FILE.exists():
+    try:
+        with CRASH_FILE.open("rb") as f:
+            file_start = f.read(200)
 
-           # Skip Git LFS pointer files instead of reading them as CSV
-           if b"git-lfs.github.com/spec/v1" not in file_start:
-               crash = pd.read_csv(
-                   CRASH_FILE,
-                   usecols=lambda c: c in [
-                       "Crash_ID", "Crash_Date", "Crash_Time",
-                       "Crash_Fatal_Fl", "Death_Cnt", "Tot_Injry_Cnt",
-                       "Rpt_CRIS_Cnty_ID", "Rpt_City_ID",
-                       "Wthr_Cond_ID", "Light_Cond_ID",
-                       "Crash_Speed_Limit", "At_Intrsct_Fl",
-                       "Rpt_Street_Name", "Rpt_Street_Desc"
-                   ],
-                   low_memory=False
-               )
-               if "Crash_ID" in crash.columns:
-                   crash = crash.drop_duplicates(subset=["Crash_ID"])
-                   df = df.merge(
-                       crash,
-                       on="Crash_ID",
-                       how="left",
-                       suffixes=("", "_detail")
-                   )
-     except Exception:
-         pass
+        # Skip Git LFS pointer files
+        if b"git-lfs.github.com/spec/v1" not in file_start:
+            crash = pd.read_csv(
+                CRASH_FILE,
+                low_memory=False
+            )
+
+            if "Crash_ID" in crash.columns:
+                crash = crash.drop_duplicates(subset=["Crash_ID"])
+                df = df.merge(
+                    crash,
+                    on="Crash_ID",
+                    how="left",
+                    suffixes=("", "_detail")
+                )
+
+    except Exception as e:
+        print(f"Optional crash data could not be loaded: {e}")
 
     # Normalize the key fields
     for col in ["Latitude", "Longitude"]:
