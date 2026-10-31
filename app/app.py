@@ -27,65 +27,75 @@ st.markdown(
 # Load existing project data
 # --------------------------------------------------
 
-@st.cache_data
+
+@st.cache_resource
 def load_data():
     if not FEATURE_FILE.exists():
         raise FileNotFoundError(
-            f"Could not find {FEATURE_FILE}. "
-            "Check that your processed CSV files are in data/processed/."
+            f"Could not find {FEATURE_FILE}"
         )
 
-    df = pd.read_csv(FEATURE_FILE, low_memory=False)
+    # Load only columns needed by the dashboard
+    required_cols = [
+        "Crash_Year",
+        "Crash_Month",
+        "Crash_Hour",
+        "Time_Period",
+        "Severity_Target"
+    ]
 
-    # Load optional crash details
-    if CRASH_FILE.exists():
-        try:
-            with CRASH_FILE.open("rb") as f:
-                file_start = f.read(200)
+    optional_cols = [
+        "Crash_ID",
+        "Latitude",
+        "Longitude",
+        "Crash_Fatal_Fl",
+        "Death_Cnt",
+        "Tot_Injry_Cnt",
+        "Rpt_Street_Name",
+        "Rpt_Street_Desc",
+        "Wthr_Cond_ID",
+        "Light_Cond_ID"
+    ]
 
-            # Skip Git LFS pointer files
-            if b"git-lfs.github.com/spec/v1" not in file_start:
-                crash = pd.read_csv(
-                    CRASH_FILE,
-                    usecols=lambda c: c in [
-                        "Crash_ID", "Crash_Date", "Crash_Time",
-                        "Crash_Fatal_Fl", "Death_Cnt", "Tot_Injry_Cnt",
-                        "Rpt_CRIS_Cnty_ID", "Rpt_City_ID",
-                        "Wthr_Cond_ID", "Light_Cond_ID",
-                        "Crash_Speed_Limit", "At_Intrsct_Fl",
-                        "Rpt_Street_Name", "Rpt_Street_Desc"
-                    ],
-                    low_memory=False
-                )
+    available_cols = pd.read_csv(
+        FEATURE_FILE, nrows=0
+    ).columns.tolist()
 
-                if "Crash_ID" in crash.columns:
-                    crash = crash.drop_duplicates(subset=["Crash_ID"])
-                    df = df.merge(
-                        crash,
-                        on="Crash_ID",
-                        how="left",
-                        suffixes=("", "_detail")
-                    )
-            else:
-                print("Skipping crash_cleaned.csv: Git LFS pointer detected.")
+    missing = [
+        col for col in required_cols
+        if col not in available_cols
+    ]
 
-        except Exception as e:
-            print(f"Optional crash data could not be loaded: {e}")
+    if missing:
+        raise ValueError(
+            f"Missing required columns: {missing}"
+        )
 
-    # Normalize key fields
-    for col in ["Latitude", "Longitude"]:
+    selected_cols = [
+        col for col in required_cols + optional_cols
+        if col in available_cols
+    ]
+
+    df = pd.read_csv(
+        FEATURE_FILE,
+        usecols=selected_cols,
+        low_memory=False
+    )
+
+    for col in [
+        "Latitude", "Longitude",
+        "Crash_Year", "Crash_Month", "Crash_Hour"
+    ]:
         if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors="coerce")
-
-    for col in ["Crash_Year", "Crash_Month", "Crash_Hour"]:
-        if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors="coerce")
+            df[col] = pd.to_numeric(
+                df[col], errors="coerce"
+            )
 
     for col in ["Severity_Target", "Time_Period"]:
-        if col in df.columns:
-            df[col] = df[col].fillna("Unknown").astype(str)
+        df[col] = df[col].fillna("Unknown").astype(str)
 
     return df
+
 
 
 
@@ -133,7 +143,7 @@ selected_severities = st.sidebar.multiselect(
     default=severities
 )
 
-filtered = df.copy()
+filtered = df
 
 if selected_years:
     filtered = filtered[
@@ -191,7 +201,7 @@ valid_coordinates = (
     False, index=filtered.index
 )
 
-map_data = filtered.loc[valid_coordinates].copy()
+map_data = filtered.loc[valid_coordinates]
 
 c1, c2, c3, c4 = st.columns(4)
 c1.metric("Crashes in selection", f"{total_crashes:,}")
@@ -356,7 +366,7 @@ search_text = st.text_input(
     placeholder="Enter a crash ID or street name..."
 )
 
-details = filtered.copy()
+details = filtered
 
 if search_text.strip():
     searchable = [
